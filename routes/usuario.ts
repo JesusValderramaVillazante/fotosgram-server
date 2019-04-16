@@ -1,28 +1,36 @@
 import { Router, Request, Response } from "express";
 import { Usuario } from "../models/usuario.model";
 import bcrypt from 'bcrypt';
+import Token from "../classes/token";
 
 const userRoutes = Router();
 
 userRoutes.post('/login', (req: Request, res: Response) => {
     const body = req.body;
-    
-    Usuario.findOne({email: body.email}, (err, userDB) => {
-        if(err) throw err;
-      
-        if(!userDB){
+
+    Usuario.findOne({ email: body.email }, (err, userDB) => {
+        if (err) throw err;
+
+        if (!userDB) {
             return res.json({
                 ok: false,
                 mensaje: 'usuario/contraseña no son correctos'
             })
         }
 
-        if(userDB.compararPassword(body.password)){
+        if (userDB.compararPassword(body.password)) {
+            const tokenUser = Token.getJwtToken({
+                _id: userDB.id,
+                nomber: userDB.nombre,
+                email: userDB.email,
+                avatar: userDB.avatar
+            });
+
             res.json({
                 ok: true,
-                token: 'safasdasd'
+                token: tokenUser
             })
-        }else{
+        } else {
             return res.json({
                 ok: false,
                 mensaje: 'usuario/contraseña no son correctos ***'
@@ -40,9 +48,20 @@ userRoutes.post('/create', (req: Request, res: Response) => {
     }
 
     Usuario.create(user).then(userDB => {
-        res.json({ok: true, userDB});
+        const tokenUser = Token.getJwtToken({
+            _id: userDB.id,
+            nomber: userDB.nombre,
+            email: userDB.email,
+            avatar: userDB.avatar
+        });
+
+        res.json({
+            ok: true,
+            token: tokenUser
+        })
+
     }).catch(err => {
-        res.json({ok: false, err});
+        res.json({ ok: false, err });
     });
 
 });
