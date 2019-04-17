@@ -10,8 +10,18 @@ class FileSystem {
     constructor() { }
     ;
     guardarImagenTemporal(file, userId) {
-        const path = this.crearCarpetaUsuario(userId);
-        const nombreArchivo = this.generarNombreUnico(file.name);
+        return new Promise((resolve, reject) => {
+            const path = this.crearCarpetaUsuario(userId);
+            const nombreArchivo = this.generarNombreUnico(file.name);
+            file.mv(`${path}/${nombreArchivo}`, (err) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
     }
     generarNombreUnico(nombreOriginal) {
         const nombreArr = nombreOriginal.split('.');

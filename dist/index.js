@@ -12,7 +12,7 @@ const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const server = new server_1.Server();
 server.app.use(body_parser_1.default.urlencoded({ extended: true }));
 server.app.use(body_parser_1.default.json());
-server.app.use(express_fileupload_1.default());
+server.app.use(express_fileupload_1.default({ useTempFiles: true }));
 server.app.use('/user', usuario_1.default);
 server.app.use('/post', post_1.default);
 mongoose_1.default.connect('mongodb://localhost:27017/fotosgram', { useNewUrlParser: true, useCreateIndex: true }, (err) => {
