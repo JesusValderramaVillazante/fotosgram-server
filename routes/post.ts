@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { verificaToken } from "../middlewares/autenticacion";
 import { Post } from "../models/post.model";
+import { FileUpload } from "../interfaces/file-upload";
 
 const postRoutes = Router();
 
@@ -39,5 +40,35 @@ postRoutes.post('/', [verificaToken], (req: any, res: Response) => {
         res.json(err)
     })
 });
+
+postRoutes.post('/upload', [ verificaToken ], (req: Request, res: Response) => {
+    if(!req.files){
+        return res.status(400).json({
+            ok: false,
+            mensaje: "no se subio ningun archivo"
+        });
+    }
+
+    const file: any = req.files.image;
+
+    if(!file){
+        return res.status(400).json({
+            ok: false,
+            mensaje: "no se subio ningun archivo - image"
+        });
+    }
+
+    if(!file.mimetype.includes('image')){
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'lo que subio no es una imagen'
+        })
+    }
+
+    res.json({
+        ok:true,
+        file: file.mimetype
+    })
+})
 
 export default postRoutes;
