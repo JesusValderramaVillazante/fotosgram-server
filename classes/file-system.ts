@@ -1,12 +1,21 @@
 import { FileUpload } from "../interfaces/file-upload";
 import path from 'path';
 import fs from 'fs';
+import uniqid from 'uniqid';
 
 export default class FileSystem {
     constructor(){};
 
     guardarImagenTemporal(file :FileUpload, userId: string){
-        const psth = this.crearCarpetaUsuario(userId);
+        const path = this.crearCarpetaUsuario(userId);
+        const nombreArchivo = this.generarNombreUnico(file.name);
+    }
+
+    private generarNombreUnico(nombreOriginal: string){
+        const nombreArr = nombreOriginal.split('.');
+        const extension = nombreArr[nombreArr.length - 1];
+        const idUnico = uniqid();
+        return `${idUnico}.${extension}`;
     }
 
     private crearCarpetaUsuario(userId: string){
@@ -19,7 +28,6 @@ export default class FileSystem {
             fs.mkdirSync(pathUser);
             fs.mkdirSync(pathUserTemp);
         }
-        console.log(pathUser);
 
         return pathUserTemp; 
     }
