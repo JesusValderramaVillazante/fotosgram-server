@@ -88,9 +88,5 @@ userRoutes.post('/update', autenticacion_1.verificaToken, (req, res) => {
             token: tokenUser
         });
     });
-    res.json({
-        ok: true,
-        usuario: req.usuario
-    });
 });
 exports.default = userRoutes;

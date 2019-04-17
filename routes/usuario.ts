@@ -95,11 +95,6 @@ userRoutes.post('/update', verificaToken, (req: any, res: Response) => {
             token: tokenUser
         })
     })
-
-    res.json({
-        ok: true,
-        usuario: req.usuario
-    })
 });
 
 export default userRoutes;
