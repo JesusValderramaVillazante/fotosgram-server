@@ -22,7 +22,7 @@ userRoutes.post('/login', (req: Request, res: Response) => {
         if (userDB.compararPassword(body.password)) {
             const tokenUser = Token.getJwtToken({
                 _id: userDB.id,
-                nomber: userDB.nombre,
+                nombre: userDB.nombre,
                 email: userDB.email,
                 avatar: userDB.avatar
             });
@@ -51,7 +51,7 @@ userRoutes.post('/create', (req: Request, res: Response) => {
     Usuario.create(user).then(userDB => {
         const tokenUser = Token.getJwtToken({
             _id: userDB.id,
-            nomber: userDB.nombre,
+            nombre: userDB.nombre,
             email: userDB.email,
             avatar: userDB.avatar
         });
@@ -68,6 +68,34 @@ userRoutes.post('/create', (req: Request, res: Response) => {
 });
 
 userRoutes.post('/update', verificaToken, (req: any, res: Response) => {
+    const user = {
+        nombre: req.body.nombre || req.usuario.nombre,
+        email: req.body.email || req.usuario.email,
+        avatar: req.body.avatar || req.usuario.avatar
+    }
+
+    Usuario.findByIdAndUpdate(req.usuario._id, user, {new : true}, (err, userDB) => {
+        if(err) throw err;
+        if(!userDB){
+            return res.json({
+                ok: true,
+                mensaje: 'no existe usuario'
+            })
+        }
+
+        const tokenUser = Token.getJwtToken({
+            _id: userDB.id,
+            nombre: userDB.nombre,
+            email: userDB.email,
+            avatar: userDB.avatar
+        });
+
+        res.json({
+            ok: true,
+            token: tokenUser
+        })
+    })
+
     res.json({
         ok: true,
         usuario: req.usuario
